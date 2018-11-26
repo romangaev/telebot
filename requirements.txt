@@ -17,6 +17,7 @@ nltk==3.4
 numpy==1.15.4
 pandas==0.23.4
 pycparser==2.19
+pymongo==3.7.2
 python-dateutil==2.7.5
 python-telegram-bot==11.1.0
 pytz==2018.7
@@ -30,3 +31,4 @@ telegram==0.0.1
 urllib3==1.24.1
 virtualenv==16.1.0
 wikipedia==1.4.0
+
