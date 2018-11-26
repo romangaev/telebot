@@ -11,9 +11,8 @@ from pymongo import MongoClient
 class AnswerGenerator:
 
     def __init__(self):
-        MONGODB_URI = 'mongodb://rgaev:iha492081@ds117334.mlab.com:17334/sberbot'
-        client = MongoClient(MONGODB_URI)
-        db = client.chatbot_db
+        client = MongoClient('mongodb://rgaev:iha492081@ds141813.mlab.com:41813/digital_wallet')
+        db = client.digital_wallet
         var_files_collection = db.var_files
 
         self.dictionary = pickle.loads(var_files_collection.posts.find_one({'name': "dictionary"})["file"])
