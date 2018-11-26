@@ -8,15 +8,12 @@ import os
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level=logging.INFO)
 
-# TG_TOKEN = os.environ['TG_TOKEN']
+TG_TOKEN = os.environ['TG_TOKEN']
 answer_generator = AnswerGenerator()
-print(answer_generator.generate_answer("карта отделение"))
+
 
 def idle_main(bot, update):
-    received=update.message.text
-    text=answer_generator.generate_answer(received)
-    logging.info("Received:"+received+"Answer:"+text)
-    bot.sendMessage(update.message.chat_id, text=text)
+    bot.sendMessage(update.message.chat_id, text=answer_generator.generate_answer(update.message.text))
     logging.info("echoing some message...")
 
 def slash_start(bot, update):
@@ -32,7 +29,6 @@ def main():
     updater.start_polling()
     updater.idle()
 
-'''
+
 if __name__ == '__main__':
     main()
-'''
