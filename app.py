@@ -8,9 +8,9 @@ import os
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level=logging.INFO)
 
-TG_TOKEN = os.environ['TG_TOKEN']
+# TG_TOKEN = os.environ['TG_TOKEN']
 answer_generator = AnswerGenerator()
-
+print(answer_generator.generate_answer("карта отделение"))
 
 def idle_main(bot, update):
     received=update.message.text
@@ -32,6 +32,7 @@ def main():
     updater.start_polling()
     updater.idle()
 
-
+'''
 if __name__ == '__main__':
     main()
+'''

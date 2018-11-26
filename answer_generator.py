@@ -43,7 +43,7 @@ class AnswerGenerator:
         answer_topics = sorted(
             self.lda.get_document_topics(tfidf_vector, minimum_probability=None, minimum_phi_value=None,
                                                 per_word_topics=False), key=lambda x: x[1], reverse=True)[:5]
-        to_send.join(str(answer_topics))
+        to_send = to_send+str(answer_topics)
         # Лист возможных вопросов для предложения:
         answers_rating = []
         for every in answer_topics:
@@ -62,7 +62,7 @@ class AnswerGenerator:
 
         for every in answers_rating:
             question = self.documents['question'][every[0]]
-            to_send.join("\n"+"Вероятность: "+str(every[1])+"\n"+question)
+            to_send = to_send + "\n"+"Вероятность: "+str(every[1])+"\n"+question
 
         return to_send
 
