@@ -17,7 +17,7 @@ def idle_main(bot, update):
     logging.info("echoing some message...")
 
 def slash_start(bot, update):
-    bot.sendMessage(update.message.chat_id, text="Привет! Я - Сбер-бот, бот, который отвечает на вопросы чуть лучше чем невпопад!")
+    bot.sendMessage(update.message.chat_id, text="Привет! Я - Сбер-бот, бот, который отвечает на вопросы чуть лучше, чем невпопад!")
     logging.info("replying start command...")
 
 def main():
