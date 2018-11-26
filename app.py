@@ -13,7 +13,10 @@ answer_generator = AnswerGenerator()
 
 
 def idle_main(bot, update):
-    bot.sendMessage(update.message.chat_id, text=answer_generator.generate_answer(update.message.text))
+    received=update.message.text
+    text=answer_generator.generate_answer(received)
+    logging.info("Received:"+received+"Answer:"+text)
+    bot.sendMessage(update.message.chat_id, text=text)
     logging.info("echoing some message...")
 
 def slash_start(bot, update):
