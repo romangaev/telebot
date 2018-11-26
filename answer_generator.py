@@ -41,9 +41,9 @@ class AnswerGenerator:
 
         # Лист возможных топиков для предложения (get_document_topics)
         answer_topics = sorted(
-            self.lda.get_document_topics(tfidf_vector, minimum_probability=None, minimum_phi_value=None,
+            self.lda.get_document_topics(bow_vector, minimum_probability=None, minimum_phi_value=None,
                                                 per_word_topics=False), key=lambda x: x[1], reverse=True)[:5]
-        to_send = to_send+str(answer_topics)
+        to_send = to_send+answer_topics
         # Лист возможных вопросов для предложения:
         answers_rating = []
         for every in answer_topics:
