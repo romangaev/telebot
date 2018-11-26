@@ -1,25 +1,37 @@
 import pickle
-
+import os
 import gensim
 import pandas as pd
 from gensim.models import LdaModel, TfidfModel
 from nltk import SnowballStemmer, WordNetLemmatizer
 from nltk.corpus import stopwords
+from pymongo import MongoClient
 
 
 class AnswerGenerator:
 
     def __init__(self):
-        self.dictionary = pickle.load(open("dictionary.pickle", "rb"))
-        self.clusters_with_questions = pickle.load(open("clusters_with_questions.pickle", "rb"))
-        self.lda = LdaModel.load("my_model")
-        self.tfidf_model = TfidfModel.load("tfidf_model")
-        self.corpus_tfidf = pickle.load(open("corpus_tfidf.pickle", "rb"))
+        MONGODB_URI = 'mongodb://rgaev:iha492081@ds117334.mlab.com:17334/sberbot'
+        client = MongoClient(MONGODB_URI)
+        db = client.chatbot_db
+        var_files_collection = db.var_files
 
-        data = pd.read_csv('vk.csv', error_bad_lines=False)
-        data_text = data[['question']]
-        data_text['index'] = data_text.index
-        self.documents = data_text
+        self.dictionary = pickle.loads(var_files_collection.posts.find_one({'name': "dictionary"})["file"])
+        #self.dictionary = pickle.load(open("dictionary.pickle", "rb"))
+        self.clusters_with_questions = pickle.loads(var_files_collection.posts.find_one({'name': "clusters_with_questions"})["file"])
+        #self.clusters_with_questions = pickle.load(open("clusters_with_questions.pickle", "rb"))
+        self.lda = pickle.loads(
+            var_files_collection.posts.find_one({'name': "lda"})["file"])
+        #self.lda = LdaModel.load("my_model")
+        self.tfidf_model = pickle.loads(
+            var_files_collection.posts.find_one({'name': "tfidf_model"})["file"])
+        #self.tfidf_model = TfidfModel.load("tfidf_model")
+        self.corpus_tfidf = pickle.loads(
+            var_files_collection.posts.find_one({'name': "corpus_tfidf"})["file"])
+        #self.corpus_tfidf = pickle.load(open("corpus_tfidf.pickle", "rb"))
+
+        self.documents = pickle.loads(
+            var_files_collection.posts.find_one({'name': "documents"})["file"])
 
     def generate_answer(self, text):
         to_send = ''

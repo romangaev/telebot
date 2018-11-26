@@ -3,11 +3,12 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 from answer_generator import AnswerGenerator
+import os
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level=logging.INFO)
 
-TG_TOKEN = "736286969:AAHG5d8gNaGGzWJupSaFgF6I3MexN7T8gI4"
+TG_TOKEN = os.environ['TG_TOKEN']
 answer_generator = AnswerGenerator()
 
 

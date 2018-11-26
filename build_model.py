@@ -1,5 +1,6 @@
 import pandas as pd
 import gensim
+from bson import Binary
 from gensim import corpora, models
 from nltk.stem import WordNetLemmatizer
 from nltk.stem.snowball import *
@@ -10,10 +11,11 @@ from collections import defaultdict
 import wikipedia
 import pickle
 
+from pymongo import MongoClient
 
 
-NUMBER_OF_CLUSTERS = 20
 
+NUMBER_OF_CLUSTERS = 50
 
 # методы для предобработки текста
 def lemmatize_stemming(text):
@@ -38,6 +40,10 @@ def get_wiki_name(terms_list):
 
 
 if __name__ == '__main__':
+    client = MongoClient('mongodb://rgaev:iha492081@ds141813.mlab.com:41813/digital_wallet')
+    db = client.digital_wallet
+    var_files_collection = db.var_files
+
     # читаем файл с данныим
     data = pd.read_csv('vk.csv', error_bad_lines=False)
     data_text = data[['question']]
@@ -107,13 +113,31 @@ if __name__ == '__main__':
         print('\n')
 
     #дальше сохранить - саму модель, dictionary, clusters_with_questions,
-    lda_model_tfidf.save("my_model")
-    # Load a potentially pretrained model from disk.
-    # lda = LdaModel.load(temp_file)
-    pickle.dump(dictionary, open("dictionary.pickle", "wb"))
-    pickle.dump(tfidf, open("tfidf_model.pickle", "wb"))
-    pickle.dump(clusters_with_questions, open("clusters_with_questions.pickle", "wb"))
-    pickle.dump(corpus_tfidf, open("corpus_tfidf.pickle", "wb"))
-    pickle.dump(bow_corpus, open("corpus_bow.pickle", "wb"))
-    # pickle.load(open("dictionary.pickle", "rb"))
+    #lda_model_tfidf.save("my_model")
 
+    #pickle.dump(dictionary, open("dictionary.pickle", "wb"))
+    #pickle.dump(tfidf, open("tfidf_model.pickle", "wb"))
+    #pickle.dump(clusters_with_questions, open("clusters_with_questions.pickle", "wb"))
+    #pickle.dump(corpus_tfidf, open("corpus_tfidf.pickle", "wb"))
+    #pickle.dump(bow_corpus, open("corpus_bow.pickle", "wb"))
+
+    post1 = {'name': "dictionary", 'file': Binary(pickle.dumps(dictionary))}
+    var_files_collection.posts.insert_one(post1)
+
+    post2 = {'name': "tfidf_model", 'file': Binary(pickle.dumps(tfidf))}
+    var_files_collection.posts.insert_one(post2)
+
+    post3 = {'name': "clusters_with_questions", 'file': Binary(pickle.dumps(clusters_with_questions))}
+    var_files_collection.posts.insert_one(post3)
+
+    post4 = {'name': "corpus_tfidf", 'file': Binary(pickle.dumps(corpus_tfidf))}
+    var_files_collection.posts.insert_one(post4)
+
+    post5 = {'name': "bow_corpus", 'file': Binary(pickle.dumps(bow_corpus))}
+    var_files_collection.posts.insert_one(post5)
+
+    post6 = {'name': "lda", 'file': Binary(pickle.dumps(lda_model_tfidf))}
+    var_files_collection.posts.insert_one(post6)
+
+    post7 = {'name': "documents", 'file': Binary(pickle.dumps(documents))}
+    var_files_collection.posts.insert_one(post7)
