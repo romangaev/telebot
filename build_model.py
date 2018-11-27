@@ -15,7 +15,7 @@ from pymongo import MongoClient
 
 
 
-NUMBER_OF_CLUSTERS = 20
+NUMBER_OF_CLUSTERS = 30
 
 # методы для предобработки текста
 def lemmatize_stemming(text):
@@ -31,13 +31,6 @@ def preprocess(text):
                 full_word_dictionary[stemmed] = token
                 result.append(stemmed)
     return result
-
-def get_wiki_name(terms_list):
-    wikipedia.set_lang('ru')
-    search_string = ' '.join(terms_list)
-    result = wikipedia.search(search_string, results=1)
-    return result
-
 
 if __name__ == '__main__':
     client = MongoClient('mongodb://rgaev:iha492081@ds141813.mlab.com:41813/digital_wallet')
@@ -80,28 +73,6 @@ if __name__ == '__main__':
     # делаем модель кластеризации по корпусу
     lda_model_tfidf = gensim.models.LdaMulticore(corpus_tfidf, num_topics=NUMBER_OF_CLUSTERS, id2word=dictionary, passes=2, workers=4)
 
-    # НАХОЖДЕНИЕ ТРИВИАЛЬНОГО НАЗВАНИЯ КЛАСТЕРА
-
-    # словарь topic_id - topic trivial name
-    topics_list={}
-    for idx, topic in lda_model_tfidf.print_topics(-1):
-            print('Topic: {} Word: {}'.format(idx, topic))
-            threshold = 5
-            topic_terms = lda_model_tfidf.get_topic_terms(idx,threshold)
-            string_terms = []
-            for every in topic_terms:
-                word_on_id = full_word_dictionary[dictionary[every[0]]]
-                string_terms.append(word_on_id)
-            print(string_terms)
-            wiki_name = get_wiki_name(string_terms)
-            print("Wiki name:")
-            print(wiki_name)
-            print("\n")
-            topics_list[idx] = wiki_name
-
-    print("ЛИСТ ТОПИКОВ:")
-    print(topics_list)
-    print("\n")
 
     # ОПРЕДЕЛЕНИЕ КЛАСТЕРА ДЛЯ КАЖДОГО ВОПРОСА В БАЗЕ
     for index, row in documents.iterrows():
@@ -130,8 +101,6 @@ if __name__ == '__main__':
     tfidf_vector = tfidf[bow_vector]
     print(bow_vector)
 
-    # for index, score in lda_model_tfidf[tfidf_vector]:
-    #    print("\nScore: {}\t \nTopic {}: {}".format(score, topics_list[index], lda_model_tfidf.print_topic(index, 10)))
 
     print("Лист возможных топиков для предложения (get_document_topics):")
     answer_topics = sorted(
@@ -139,6 +108,10 @@ if __name__ == '__main__':
                                             per_word_topics=False), key=lambda x: x[1], reverse=True)[:5]
     print(answer_topics)
 
+
+
+
+    # занесение в базу
     post1 = {'name': "dictionary", 'file': Binary(pickle.dumps(dictionary))}
     var_files_collection.posts.insert_one(post1)
 
