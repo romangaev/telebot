@@ -20,8 +20,8 @@
 * Сервис не суммаризирует термины для кластеров в общую тематику
 * Сервис использует BoW модель для векторизации текста, в перспективе может быть рассмотрена word2vec модель, использование n-grams, выявление noun phrase и объекта вопроса
 * Необходим более точный метод определения количества кластеров, метод Elbow и K-means дал лишь примерные результаты, можно рассмотреть Model Perplexity and Coherence Score
-![alt text](http://url/to/img.png)
-![alt text](http://url/to/img.png)
+![alt text](https://raw.githubusercontent.com/romangaev/telebot/master/Figure_1.png)
+![alt text](https://raw.githubusercontent.com/romangaev/telebot/master/Figure_2.png)
 
 ### Python version
 Python 3.6.3
