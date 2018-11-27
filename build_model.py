@@ -122,7 +122,7 @@ if __name__ == '__main__':
         print('\n')
 
     print("Predicting unseen doc:")
-    unseen_document = 'я потерял смс с номером visa и не знаю свой номер. как узнать этот номер?'
+    unseen_document = 'где находится ближайший офис сбербанка?'
 
     print(unseen_document)
     print(preprocess(unseen_document))

@@ -70,7 +70,7 @@ class AnswerGenerator:
             for every in topic_terms:
                 word_on_id = self.full_form[self.dictionary[every[0]]]
                 string_terms.append(word_on_id)
-            to_send = to_send+"\nКластер: "+str(string_terms)+"\nВероятность: "+str(topic[1])
+            to_send = to_send+"\n\nКластер: "+str(string_terms)+"\nВероятность: "+str(topic[1])
 
         return to_send
 
