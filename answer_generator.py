@@ -16,21 +16,19 @@ class AnswerGenerator:
         var_files_collection = db.var_files
 
         self.dictionary = pickle.loads(var_files_collection.posts.find_one({'name': "dictionary"})["file"])
-        #self.dictionary = pickle.load(open("dictionary.pickle", "rb"))
         self.clusters_with_questions = pickle.loads(var_files_collection.posts.find_one({'name': "clusters_with_questions"})["file"])
-        #self.clusters_with_questions = pickle.load(open("clusters_with_questions.pickle", "rb"))
         self.lda = pickle.loads(
             var_files_collection.posts.find_one({'name': "lda"})["file"])
-        #self.lda = LdaModel.load("my_model")
         self.tfidf_model = pickle.loads(
             var_files_collection.posts.find_one({'name': "tfidf_model"})["file"])
-        #self.tfidf_model = TfidfModel.load("tfidf_model")
         self.corpus_tfidf = pickle.loads(
             var_files_collection.posts.find_one({'name': "corpus_tfidf"})["file"])
-        #self.corpus_tfidf = pickle.load(open("corpus_tfidf.pickle", "rb"))
-
         self.documents = pickle.loads(
             var_files_collection.posts.find_one({'name': "documents"})["file"])
+        self.full_form = pickle.loads(
+            var_files_collection.posts.find_one({'name': "full_form"})["file"])
+        self.answers = pickle.loads(
+            var_files_collection.posts.find_one({'name': "answers"})["file"])
 
     def generate_answer(self, text):
         to_send = ''
@@ -39,11 +37,20 @@ class AnswerGenerator:
         bow_vector = self.dictionary.doc2bow(preprocess(text))
         tfidf_vector = self.tfidf_model[bow_vector]
 
+        print(self.lda[tfidf_vector])
+
         # Лист возможных топиков для предложения (get_document_topics)
-        answer_topics = sorted(
-            self.lda.get_document_topics(bow_vector, minimum_probability=None, minimum_phi_value=None,
-                                                per_word_topics=False), key=lambda x: x[1], reverse=True)[:5]
-        to_send = to_send+answer_topics.__str__()
+        answer_topics = sorted(self.lda.get_document_topics(tfidf_vector, minimum_probability=None, minimum_phi_value=None, per_word_topics=False), key=lambda x: x[1],reverse=True)[:5]
+        for topic in answer_topics:
+            threshold = 5
+            topic_terms = self.lda.get_topic_terms(topic[0], threshold)
+            string_terms = []
+            for every in topic_terms:
+                word_on_id = self.full_form[self.dictionary[every[0]]]
+                string_terms.append(word_on_id)
+            to_send = to_send+str(topic)+"\n"+str(string_terms)
+
+
         # Лист возможных вопросов для предложения:
         answers_rating = []
         for every in answer_topics:
@@ -62,7 +69,8 @@ class AnswerGenerator:
 
         for every in answers_rating:
             question = self.documents['question'][every[0]]
-            to_send = to_send + "\n"+"Вероятность: "+str(every[1])+"\n"+question
+            answer = self.answers['answer'][every[0]]
+            to_send = to_send + "\n"+"Вероятность: "+str(every[1])+"\nВопрос: "+question+"\nОтвет: "+answer
 
         return to_send
 

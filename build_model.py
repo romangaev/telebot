@@ -15,7 +15,7 @@ from pymongo import MongoClient
 
 
 
-NUMBER_OF_CLUSTERS = 50
+NUMBER_OF_CLUSTERS = 20
 
 # методы для предобработки текста
 def lemmatize_stemming(text):
@@ -47,8 +47,17 @@ if __name__ == '__main__':
     # читаем файл с данныим
     data = pd.read_csv('vk.csv', error_bad_lines=False)
     data_text = data[['question']]
+
+    answers = data[['answer']]
     data_text['index'] = data_text.index
+    answers['index'] = answers.index
     documents = data_text
+    answers = data["answer"].tolist()
+    #print(answers[:5])
+    answers = [str(every)[:250] for every in answers]
+    for i in range(10):
+        print(answers[i])
+        print('\n')
 
     # словарь всех кластеров с листами вопросов принадлежащих кластерам
     clusters_with_questions = defaultdict(list)
@@ -112,14 +121,23 @@ if __name__ == '__main__':
         print(len(value))
         print('\n')
 
-    #дальше сохранить - саму модель, dictionary, clusters_with_questions,
-    #lda_model_tfidf.save("my_model")
+    print("Predicting unseen doc:")
+    unseen_document = 'я потерял смс с номером visa и не знаю свой номер. как узнать этот номер?'
 
-    #pickle.dump(dictionary, open("dictionary.pickle", "wb"))
-    #pickle.dump(tfidf, open("tfidf_model.pickle", "wb"))
-    #pickle.dump(clusters_with_questions, open("clusters_with_questions.pickle", "wb"))
-    #pickle.dump(corpus_tfidf, open("corpus_tfidf.pickle", "wb"))
-    #pickle.dump(bow_corpus, open("corpus_bow.pickle", "wb"))
+    print(unseen_document)
+    print(preprocess(unseen_document))
+    bow_vector = dictionary.doc2bow(preprocess(unseen_document))
+    tfidf_vector = tfidf[bow_vector]
+    print(bow_vector)
+
+    # for index, score in lda_model_tfidf[tfidf_vector]:
+    #    print("\nScore: {}\t \nTopic {}: {}".format(score, topics_list[index], lda_model_tfidf.print_topic(index, 10)))
+
+    print("Лист возможных топиков для предложения (get_document_topics):")
+    answer_topics = sorted(
+        lda_model_tfidf.get_document_topics(tfidf_vector, minimum_probability=None, minimum_phi_value=None,
+                                            per_word_topics=False), key=lambda x: x[1], reverse=True)[:5]
+    print(answer_topics)
 
     post1 = {'name': "dictionary", 'file': Binary(pickle.dumps(dictionary))}
     var_files_collection.posts.insert_one(post1)
@@ -141,3 +159,9 @@ if __name__ == '__main__':
 
     post7 = {'name': "documents", 'file': Binary(pickle.dumps(documents))}
     var_files_collection.posts.insert_one(post7)
+
+    post8 = {'name': "answers", 'file': Binary(pickle.dumps(answers))}
+    var_files_collection.posts.insert_one(post8)
+
+    post9 = {'name': "full_form",'file': Binary(pickle.dumps(full_word_dictionary))}
+    var_files_collection.posts.insert_one(post9)
