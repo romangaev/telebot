@@ -69,7 +69,7 @@ class AnswerGenerator:
 
         for every in answers_rating:
             question = self.documents['question'][every[0]]
-            answer = self.answers['answer'][every[0]]
+            answer = self.answers[every[0]]
             to_send = to_send + "\n"+"Вероятность: "+str(every[1])+"\nВопрос: "+question+"\nОтвет: "+answer
 
         return to_send
