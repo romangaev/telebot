@@ -41,15 +41,6 @@ class AnswerGenerator:
 
         # Лист возможных топиков для предложения (get_document_topics)
         answer_topics = sorted(self.lda.get_document_topics(tfidf_vector, minimum_probability=None, minimum_phi_value=None, per_word_topics=False), key=lambda x: x[1],reverse=True)[:5]
-        for topic in answer_topics:
-            threshold = 5
-            topic_terms = self.lda.get_topic_terms(topic[0], threshold)
-            string_terms = []
-            for every in topic_terms:
-                word_on_id = self.full_form[self.dictionary[every[0]]]
-                string_terms.append(word_on_id)
-            to_send = to_send+str(topic)+"\n"+str(string_terms)
-
 
         # Лист возможных вопросов для предложения:
         answers_rating = []
@@ -70,7 +61,16 @@ class AnswerGenerator:
         for every in answers_rating:
             question = self.documents['question'][every[0]]
             answer = self.answers[every[0]]
-            to_send = to_send + "\n"+"Вероятность: "+str(every[1])+"\nВопрос: "+question+"\nОтвет: "+answer
+            to_send = to_send + "\n\nВопрос: "+question+"\nОтвет: "+answer+ "\n"+"Вероятность: "+str(every[1])
+
+        for topic in answer_topics:
+            threshold = 5
+            topic_terms = self.lda.get_topic_terms(topic[0], threshold)
+            string_terms = []
+            for every in topic_terms:
+                word_on_id = self.full_form[self.dictionary[every[0]]]
+                string_terms.append(word_on_id)
+            to_send = to_send+"\nКластер: "+str(string_terms)+"\nВероятность: "+str(topic[1])
 
         return to_send
 
