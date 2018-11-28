@@ -15,7 +15,7 @@ from pymongo import MongoClient
 
 
 
-NUMBER_OF_CLUSTERS = 30
+NUMBER_OF_CLUSTERS = 35
 
 # методы для предобработки текста
 def lemmatize_stemming(text):
