@@ -1,5 +1,5 @@
 
-## Q&A Sber Telegram Bot
+## Q&A Sber Telegram bot 
 
 ### Работа с сервисом
 Бот доступен в Telegram под именем @gaev_sber_bot
